@@ -30,14 +30,9 @@
 
         public IEnumerable<long> Timestamps => this.timestamps;
 
-        public bool TryGetElapsedTime(HttpSysRequestTimingType startTiming, HttpSysRequestTimingType endTiming, out TimeSpan elapsed)
+        public bool TryGetElapsedTime(HttpSysRequestTimingType startingTimestampType, HttpSysRequestTimingType endingTimestampType, out TimeSpan elapsed)
         {
-            if (startTiming > endTiming)
-            {
-                throw new ArgumentException("Start timing should be less than end timing");
-            }
-
-            if (this.TryGetTimestamp(startTiming, out long startTimestamp) && this.TryGetTimestamp(endTiming, out long endTimestamp))
+            if (this.TryGetTimestamp(startingTimestampType, out long startTimestamp) && this.TryGetTimestamp(endingTimestampType, out long endTimestamp))
             {
                 elapsed = TimeProvider.System.GetElapsedTime(startTimestamp, endTimestamp);
                 return true;
@@ -47,9 +42,9 @@
             return false;
         }
 
-        public bool TryGetTimestamp(HttpSysRequestTimingType timingType, out long timestamp)
+        public bool TryGetTimestamp(HttpSysRequestTimingType timestampType, out long timestamp)
         {
-            int index = (int)timingType;
+            int index = (int)timestampType;
             if (index < this.timestamps.Length && this.timestamps[index] > 0)
             {
                 timestamp = this.timestamps[index];
